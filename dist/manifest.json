@@ -1,0 +1,48 @@
+{
+  "name": "Family Finances",
+  "short_name": "FamFinances",
+  "description": "Gestion complète du budget familial - Revenus, dépenses, épargne",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23000' width='192' height='192'/><circle cx='96' cy='96' r='60' fill='%23fff'/><line x1='96' y1='60' x2='96' y2='132' stroke='%23000' stroke-width='8'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%23000' width='512' height='512'/><circle cx='256' cy='256' r='160' fill='%23fff'/><line x1='256' y1='160' x2='256' y2='352' stroke='%23000' stroke-width='20'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%23f0f0f0' width='540' height='720'/><text x='270' y='360' font-size='100' text-anchor='middle' dominant-baseline='middle'>Family Finances</text></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Ajouter une transaction",
+      "short_name": "Nouvelle transaction",
+      "description": "Ajouter rapidement une transaction",
+      "url": "/?action=add-transaction",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%23000' width='96' height='96'/><line x1='24' y1='48' x2='72' y2='48' stroke='%23fff' stroke-width='6'/><line x1='48' y1='24' x2='48' y2='72' stroke='%23fff' stroke-width='6'/></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}
