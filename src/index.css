@@ -100,3 +100,55 @@ code {
 }
 
 /* Viewport meta est géré en HTML */
+
+/* MOBILE BOTTOM NAVIGATION */
+@media (max-width: 768px) {
+  /* Ajouter du padding en bas pour la nav */
+  body {
+    padding-bottom: 80px;
+  }
+
+  /* Tabs fixes en bas */
+  [style*="borderBottom:"] {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    background: white !important;
+    border-top: 1px solid #e5e7eb !important;
+    border-bottom: none !important;
+    padding: 12px 0 !important;
+    gap: 0 !important;
+    z-index: 1000 !important;
+  }
+
+  /* Rendre les onglets cliquables */
+  [style*="borderBottom:"] > button,
+  [style*="borderBottom:"] > div > button {
+    flex: 1 !important;
+    padding: 12px 8px !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    color: #666 !important;
+    transition: color 0.2s !important;
+  }
+
+  [style*="borderBottom:"] > button.active,
+  [style*="borderBottom:"] > div > button.active {
+    color: #000 !important;
+    border-bottom: 3px solid #000 !important;
+    padding-bottom: 9px !important;
+  }
+
+  /* Contenu principal avec padding */
+  [style*="padding: 24px"] {
+    padding-bottom: 100px !important;
+  }
+}
