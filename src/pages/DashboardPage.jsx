@@ -50,7 +50,47 @@ export default function DashboardPage() {
   const [editDescription, setEditDescription] = useState('')
   const [editDate, setEditDate] = useState('')
 
-  const categories = ['Courses', 'Loyer', 'Transport', 'Loisirs', 'Restaurant', 'Santé', 'Salaire', 'CAF', 'Virement interne', 'Autre']
+  const categories = [
+    // Revenus
+    'Salaire',
+    'CAF',
+    'Autres revenus',
+    // Logement
+    'Loyer',
+    'Énergie',
+    'Internet/Téléphone',
+    'Assurance habitation',
+    'Maintenance/Réparations',
+    // Transport
+    'Transport',
+    'Carburant',
+    'Assurance auto',
+    'Stationnement',
+    // Nourriture & courses
+    'Courses',
+    'Restaurant',
+    'Café/Snacks',
+    // Santé
+    'Santé',
+    'Mutuelle',
+    'Pharmacie',
+    // Hygiène & bien-être
+    'Hygiène/Toilette',
+    'Vêtements',
+    // Loisirs & détente
+    'Loisirs',
+    'Cadeaux',
+    'Abonnements',
+    // Enfants & famille
+    'Garde enfants',
+    'Scolarité',
+    // Impôts & finances
+    'Impôts',
+    'Banque',
+    // Autres
+    'Virement interne',
+    'Autre'
+  ]
 
   // Charger depuis localStorage au démarrage
   useEffect(() => {
