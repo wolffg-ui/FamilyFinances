@@ -526,8 +526,16 @@ export default function DashboardPage({ user, onLogout }) {
     }
   }
 
+  const navTabs = [
+    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: 'accounts', label: 'Comptes', icon: '💳' },
+    { id: 'analytics', label: 'Analyses', icon: '📈' },
+    { id: 'budgets', label: 'Budgets', icon: '💰' },
+    { id: 'investments', label: 'Investir', icon: '📈' }
+  ]
+
   return (
-    <div style={commonStyles.container}>
+    <div style={{...commonStyles.container, paddingBottom: '100px'}}>
       {/* Notification Toast */}
       {notification && (
         <div style={{
@@ -546,42 +554,12 @@ export default function DashboardPage({ user, onLogout }) {
         </div>
       )}
 
-      {/* Header */}
-      <div style={{...commonStyles.header, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <h1 style={commonStyles.title}>Family Finances</h1>
-        <div style={{display: 'flex', gap: '12px', alignItems: 'center'}}>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            style={{...commonStyles.button, padding: '8px 12px', fontSize: '16px'}}
-            title="Toggle dark mode"
-          >
-            {darkMode ? '☀️' : '🌙'}
-          </button>
-          <button onClick={onLogout} style={commonStyles.logoutBtn}>
-            Se déconnecter
-          </button>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div style={{...commonStyles.content, paddingBottom: 0}}>
-        <div style={commonStyles.tabContainer}>
-          {[
-            { id: 'dashboard', label: '📊 Dashboard' },
-            { id: 'accounts', label: '💳 Comptes' },
-            { id: 'analytics', label: '📈 Analyses' },
-            { id: 'budgets', label: '💰 Budgets' },
-            { id: 'investments', label: '📈 Investissements' }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={commonStyles.tab(activeTab === tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {/* Compact Header */}
+      <div style={{...commonStyles.header, display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px'}}>
+        <h1 style={{...commonStyles.title, margin: 0, fontSize: '20px'}}>Family Finances</h1>
+        <button onClick={onLogout} style={{...commonStyles.logoutBtn, padding: '6px 12px', fontSize: '12px'}}>
+          Déco
+        </button>
       </div>
 
       {/* Content */}
@@ -1493,6 +1471,48 @@ export default function DashboardPage({ user, onLogout }) {
           </div>
         </div>
       )}
+
+      {/* Bottom Navigation Bar */}
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderTop: '1px solid #e5e7eb',
+        zIndex: 999,
+        height: '70px',
+        paddingBottom: '8px'
+      }}>
+        {navTabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              background: 'none',
+              border: 'none',
+              padding: '8px',
+              cursor: 'pointer',
+              fontSize: '10px',
+              color: activeTab === tab.id ? '#000' : '#999',
+              fontWeight: activeTab === tab.id ? '600' : '400',
+              transition: 'color 0.2s'
+            }}
+          >
+            <span style={{fontSize: '24px'}}>{tab.icon}</span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
