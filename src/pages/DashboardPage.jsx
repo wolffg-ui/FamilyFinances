@@ -379,28 +379,20 @@ export default function DashboardPage() {
           <Logo />
 
           {/* Soldes par Personne */}
-          <div style={{ marginTop: '20px', marginBottom: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+          <div style={{ marginTop: '20px', marginBottom: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             {/* Solde Hatice */}
-            <div style={{ padding: '14px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
-              <p style={{ margin: 0, opacity: 0.9, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>👩 Hatice</p>
-              <p style={{ margin: '6px 0 0', fontSize: '24px', fontWeight: '900' }}>
+            <div style={{ padding: '16px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+              <p style={{ margin: 0, opacity: 0.9, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>👩 Hatice Toklu</p>
+              <p style={{ margin: '8px 0 0', fontSize: '28px', fontWeight: '900' }}>
                 €{haticeBalance.toFixed(2)}
               </p>
             </div>
 
             {/* Solde Geoffrey */}
-            <div style={{ padding: '14px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
-              <p style={{ margin: 0, opacity: 0.9, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>👨 Geoffrey</p>
-              <p style={{ margin: '6px 0 0', fontSize: '24px', fontWeight: '900' }}>
+            <div style={{ padding: '16px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+              <p style={{ margin: 0, opacity: 0.9, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>👨 Geoffrey Wolff</p>
+              <p style={{ margin: '8px 0 0', fontSize: '28px', fontWeight: '900' }}>
                 €{geoffreyBalance.toFixed(2)}
-              </p>
-            </div>
-
-            {/* Solde Total */}
-            <div style={{ padding: '14px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
-              <p style={{ margin: 0, opacity: 0.9, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>💰 Total</p>
-              <p style={{ margin: '6px 0 0', fontSize: '24px', fontWeight: '900' }}>
-                €{totalBalance.toFixed(2)}
               </p>
             </div>
           </div>
