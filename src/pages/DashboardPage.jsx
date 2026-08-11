@@ -12,6 +12,7 @@ export default function DashboardPage() {
     { id: 'joint', name: 'Compte Joint', icon: '💑' },
     { id: 'hatice', name: 'Compte Hatice Toklu', icon: '👩' },
     { id: 'geoffrey', name: 'Compte Geoffrey', icon: '👨' },
+    { id: 'lep', name: 'Livret D\'épargne (LEP) Geoffrey', icon: '🏦' },
     { id: 'crypto', name: 'Trade Republic - Crypto', icon: '🪙' },
     { id: 'pea', name: 'Trade Republic - PEA', icon: '📈' },
     { id: 'bourse', name: 'Trade Republic - Bourse', icon: '💼' }
@@ -28,6 +29,7 @@ export default function DashboardPage() {
   // Formulaire
   const [showForm, setShowForm] = useState(false)
   const [showTransfer, setShowTransfer] = useState(false)
+  const [showInternalTransfer, setShowInternalTransfer] = useState(false)
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('Courses')
   const [customCategory, setCustomCategory] = useState('')
@@ -35,6 +37,8 @@ export default function DashboardPage() {
   const [transferAmount, setTransferAmount] = useState('')
   const [description, setDescription] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+  const [internalTransferAmount, setInternalTransferAmount] = useState('')
+  const [targetAccount, setTargetAccount] = useState('')
 
   // Édition
   const [editingId, setEditingId] = useState(null)
@@ -45,7 +49,7 @@ export default function DashboardPage() {
   const [editDescription, setEditDescription] = useState('')
   const [editDate, setEditDate] = useState('')
 
-  const categories = ['Courses', 'Loyer', 'Transport', 'Loisirs', 'Restaurant', 'Santé', 'Salaire', 'CAF', 'Autre']
+  const categories = ['Courses', 'Loyer', 'Transport', 'Loisirs', 'Restaurant', 'Santé', 'Salaire', 'CAF', 'Virement interne', 'Autre']
 
   // Charger depuis localStorage au démarrage
   useEffect(() => {
@@ -228,6 +232,66 @@ export default function DashboardPage() {
     alert('✅ Virement effectué!')
   }
 
+  // Virement interne entre comptes
+  const handleInternalTransfer = (e) => {
+    e.preventDefault()
+
+    if (!targetAccount) {
+      alert('❌ Veuillez sélectionner un compte destinataire')
+      return
+    }
+
+    if (targetAccount === activeAccount) {
+      alert('❌ Le compte destinataire doit être différent du compte source')
+      return
+    }
+
+    const parsedAmount = parseFloat(internalTransferAmount)
+
+    if (!internalTransferAmount || internalTransferAmount.trim() === '') {
+      alert('❌ Veuillez entrer un montant')
+      return
+    }
+
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      alert('❌ Montant invalide (doit être > 0)')
+      return
+    }
+
+    const now = new Date().toLocaleDateString('fr-FR')
+    const timestamp = Date.now()
+
+    // Transaction de débit du compte source
+    const debitTransaction = {
+      id: timestamp,
+      amount: parsedAmount,
+      category: 'Virement interne',
+      description: `Virement vers ${accounts.find(a => a.id === targetAccount)?.name}`,
+      type: 'debit',
+      date: now,
+      timestamp,
+      account: activeAccount
+    }
+
+    // Transaction de crédit du compte destinataire
+    const creditTransaction = {
+      id: timestamp + 1,
+      amount: parsedAmount,
+      category: 'Virement interne',
+      description: `Virement depuis ${accounts.find(a => a.id === activeAccount)?.name}`,
+      type: 'credit',
+      date: now,
+      timestamp,
+      account: targetAccount
+    }
+
+    setTransactions([...transactions, debitTransaction, creditTransaction])
+    setInternalTransferAmount('')
+    setTargetAccount('')
+    setShowInternalTransfer(false)
+    alert('✅ Virement interne effectué!')
+  }
+
   // Transactions du mois courant pour le compte actif
   const monthTransactions = transactions.filter(t => {
     const [day, month, year] = t.date.split('/')
@@ -326,7 +390,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', padding: '20px', marginTop: '-20px', position: 'relative', zIndex: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '20px', marginTop: '-20px', position: 'relative', zIndex: 10 }}>
           <button
             onClick={() => setShowForm(!showForm)}
             style={{
@@ -362,6 +426,24 @@ export default function DashboardPage() {
             }}
           >
             {showTransfer ? '✕ Fermer' : '💸 Virement'}
+          </button>
+          <button
+            onClick={() => setShowInternalTransfer(!showInternalTransfer)}
+            style={{
+              background: showInternalTransfer ? 'linear-gradient(135deg, #ec4899, #f43f5e)' : '#fff',
+              color: showInternalTransfer ? '#fff' : '#6366f1',
+              border: '2px solid #6366f1',
+              padding: '16px',
+              borderRadius: '14px',
+              fontSize: '15px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              minHeight: '56px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+              transition: 'all 0.3s'
+            }}
+          >
+            {showInternalTransfer ? '✕ Fermer' : '🔄 Vir. Interne'}
           </button>
         </div>
 
@@ -817,6 +899,105 @@ export default function DashboardPage() {
                 }}
               >
                 💸 Effectuer le virement
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Formulaire Virement Interne */}
+        {showInternalTransfer && (
+          <div style={{ backgroundColor: '#fff', padding: '24px', margin: '0 16px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)' }}>
+            <h3 style={{ margin: '0 0 20px', fontSize: '18px', fontWeight: '700', color: '#1f2937' }}>Virement Interne</h3>
+
+            <form onSubmit={handleInternalTransfer} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Compte source */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  De (Compte source)
+                </label>
+                <div style={{ width: '100%', padding: '14px 16px', borderRadius: '10px', backgroundColor: '#f3f4f6', fontSize: '16px', fontWeight: '600', color: '#1f2937' }}>
+                  {accounts.find(a => a.id === activeAccount)?.name}
+                </div>
+              </div>
+
+              {/* Montant */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Montant (€)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  value={internalTransferAmount}
+                  onChange={(e) => setInternalTransferAmount(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  autoFocus
+                />
+              </div>
+
+              {/* Compte destinataire */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Vers (Compte destinataire)
+                </label>
+                <select
+                  value={targetAccount}
+                  onChange={(e) => setTargetAccount(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="">-- Sélectionner un compte --</option>
+                  {accounts.map(acc => (
+                    acc.id !== activeAccount && (
+                      <option key={acc.id} value={acc.id}>
+                        {acc.icon} {acc.name}
+                      </option>
+                    )
+                  ))}
+                </select>
+              </div>
+
+              {/* Bouton soumettre */}
+              <button
+                type="submit"
+                style={{
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '14px',
+                  borderRadius: '10px',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  minHeight: '52px',
+                  boxShadow: '0 4px 15px rgba(99, 102, 241, 0.3)',
+                  transition: 'all 0.3s'
+                }}
+              >
+                🔄 Effectuer le virement interne
               </button>
             </form>
           </div>
