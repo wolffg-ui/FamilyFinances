@@ -325,6 +325,26 @@ export default function DashboardPage() {
 
   const totalBalance = getTotalBalance()
 
+  // Calcul des soldes par personne
+  const getHaticeBalance = () => {
+    const accTransactions = transactions.filter(t => t.account === 'hatice')
+    const income = accTransactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0)
+    const expenses = accTransactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0)
+    return income - expenses
+  }
+
+  const getGeoffreyBalance = () => {
+    // Geoffrey: geoffrey + lep + crypto + pea + bourse (SANS joint et SANS hatice)
+    const geoffreyAccounts = ['geoffrey', 'lep', 'crypto', 'pea', 'bourse']
+    const accTransactions = transactions.filter(t => geoffreyAccounts.includes(t.account))
+    const income = accTransactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0)
+    const expenses = accTransactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0)
+    return income - expenses
+  }
+
+  const haticeBalance = getHaticeBalance()
+  const geoffreyBalance = getGeoffreyBalance()
+
   // Données pour les graphiques
   const categoryData = {}
   monthTransactions.forEach(t => {
@@ -358,12 +378,31 @@ export default function DashboardPage() {
         }}>
           <Logo />
 
-          {/* Solde Total */}
-          <div style={{ marginTop: '20px', marginBottom: '16px', padding: '16px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
-            <p style={{ margin: 0, opacity: 0.9, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>💰 Solde Total (Tous Comptes)</p>
-            <p style={{ margin: '8px 0 0', fontSize: '32px', fontWeight: '900' }}>
-              €{totalBalance.toFixed(2)}
-            </p>
+          {/* Soldes par Personne */}
+          <div style={{ marginTop: '20px', marginBottom: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+            {/* Solde Hatice */}
+            <div style={{ padding: '14px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+              <p style={{ margin: 0, opacity: 0.9, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>👩 Hatice</p>
+              <p style={{ margin: '6px 0 0', fontSize: '24px', fontWeight: '900' }}>
+                €{haticeBalance.toFixed(2)}
+              </p>
+            </div>
+
+            {/* Solde Geoffrey */}
+            <div style={{ padding: '14px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+              <p style={{ margin: 0, opacity: 0.9, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>👨 Geoffrey</p>
+              <p style={{ margin: '6px 0 0', fontSize: '24px', fontWeight: '900' }}>
+                €{geoffreyBalance.toFixed(2)}
+              </p>
+            </div>
+
+            {/* Solde Total */}
+            <div style={{ padding: '14px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+              <p style={{ margin: 0, opacity: 0.9, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>💰 Total</p>
+              <p style={{ margin: '6px 0 0', fontSize: '24px', fontWeight: '900' }}>
+                €{totalBalance.toFixed(2)}
+              </p>
+            </div>
           </div>
 
           {/* Sélecteur de Compte */}
