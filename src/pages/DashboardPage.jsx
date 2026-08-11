@@ -34,6 +34,13 @@ export default function DashboardPage() {
   const [type, setType] = useState('debit')
   const [transferAmount, setTransferAmount] = useState('')
 
+  // Édition
+  const [editingId, setEditingId] = useState(null)
+  const [editAmount, setEditAmount] = useState('')
+  const [editCategory, setEditCategory] = useState('')
+  const [editCustomCategory, setEditCustomCategory] = useState('')
+  const [editType, setEditType] = useState('')
+
   const categories = ['Courses', 'Loyer', 'Transport', 'Loisirs', 'Restaurant', 'Santé', 'Salaire', 'CAF', 'Autre']
 
   // Charger depuis localStorage au démarrage
@@ -106,6 +113,58 @@ export default function DashboardPage() {
     setShowForm(false)
 
     alert('✅ Transaction ajoutée!')
+  }
+
+  // Ouvrir l'édition
+  const handleEditTransaction = (tx) => {
+    setEditingId(tx.id)
+    setEditAmount(tx.amount.toString())
+    setEditCategory(tx.category === 'Virement' ? 'Courses' : tx.category)
+    setEditType(tx.type)
+
+    // Si la catégorie est personnalisée, la mettre dans customCategory
+    const isCustom = !categories.includes(tx.category) && tx.category !== 'Virement'
+    if (isCustom) {
+      setEditCustomCategory(tx.category)
+      setEditCategory('Autre')
+    } else {
+      setEditCustomCategory('')
+    }
+  }
+
+  // Sauvegarder l'édition
+  const handleSaveEdit = () => {
+    const parsedAmount = parseFloat(editAmount)
+
+    if (!editAmount || editAmount.trim() === '') {
+      alert('❌ Veuillez entrer un montant')
+      return
+    }
+
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      alert('❌ Montant invalide (doit être > 0)')
+      return
+    }
+
+    const finalCategory = editCategory === 'Autre' ? (editCustomCategory.trim() || 'Autre') : editCategory
+
+    if (editCategory === 'Autre' && !editCustomCategory.trim()) {
+      alert('❌ Veuillez entrer un nom de dépense personnalisé')
+      return
+    }
+
+    setTransactions(transactions.map(t =>
+      t.id === editingId
+        ? { ...t, amount: parsedAmount, category: finalCategory, type: editType }
+        : t
+    ))
+
+    setEditingId(null)
+    setEditAmount('')
+    setEditCategory('')
+    setEditCustomCategory('')
+    setEditType('')
+    alert('✅ Transaction modifiée!')
   }
 
   // Supprimer une transaction
@@ -424,6 +483,162 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Formulaire Édition */}
+        {editingId !== null && (
+          <div style={{ backgroundColor: '#fff', padding: '24px', margin: '0 16px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)' }}>
+            <h3 style={{ margin: '0 0 20px', fontSize: '18px', fontWeight: '700', color: '#1f2937' }}>Modifier la Transaction</h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Montant */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Montant (€)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  value={editAmount}
+                  onChange={(e) => setEditAmount(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              {/* Type */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Type
+                </label>
+                <select
+                  value={editType}
+                  onChange={(e) => setEditType(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="debit">Dépense</option>
+                  <option value="credit">Revenu</option>
+                </select>
+              </div>
+
+              {/* Catégorie */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Catégorie
+                </label>
+                <select
+                  value={editCategory}
+                  onChange={(e) => setEditCategory(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                >
+                  {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Catégorie personnalisée si "Autre" */}
+              {editCategory === 'Autre' && (
+                <div>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                    Nom de la catégorie
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Cadeaux, Vacances, Mariage..."
+                    value={editCustomCategory}
+                    onChange={(e) => setEditCustomCategory(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '14px 16px',
+                      borderRadius: '10px',
+                      border: '2px solid #e5e7eb',
+                      fontSize: '16px',
+                      boxSizing: 'border-box',
+                      minHeight: '48px',
+                      fontWeight: '600',
+                      outline: 'none'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                    autoFocus
+                  />
+                </div>
+              )}
+
+              {/* Boutons */}
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={handleSaveEdit}
+                  style={{
+                    flex: 1,
+                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '14px',
+                    borderRadius: '10px',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    minHeight: '52px',
+                    boxShadow: '0 4px 15px rgba(99, 102, 241, 0.3)',
+                    transition: 'all 0.3s'
+                  }}
+                >
+                  ✓ Sauvegarder
+                </button>
+                <button
+                  onClick={() => setEditingId(null)}
+                  style={{
+                    flex: 1,
+                    background: '#e5e7eb',
+                    color: '#1f2937',
+                    border: 'none',
+                    padding: '14px',
+                    borderRadius: '10px',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    minHeight: '52px',
+                    transition: 'all 0.3s'
+                  }}
+                >
+                  ✕ Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Formulaire Virement */}
         {showTransfer && (
           <div style={{ backgroundColor: '#fff', padding: '24px', margin: '0 16px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)' }}>
@@ -572,6 +787,21 @@ export default function DashboardPage() {
                     }}>
                       {tx.type === 'credit' ? '+' : '-'}€{tx.amount.toFixed(2)}
                     </p>
+                    <button
+                      onClick={() => handleEditTransaction(tx)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#6366f1',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        padding: '4px 8px',
+                        transition: 'all 0.2s'
+                      }}
+                      title="Modifier"
+                    >
+                      ✏️
+                    </button>
                     <button
                       onClick={() => handleDeleteTransaction(tx.id)}
                       style={{
