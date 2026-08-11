@@ -10,8 +10,9 @@ export default function DashboardPage() {
   // Comptes
   const accounts = [
     { id: 'joint', name: 'Compte Joint', icon: '💑' },
-    { id: 'hatice', name: 'Compte Hatice Toklu', icon: '👩' },
+    { id: 'hatice', name: 'Compte Boursobank Hatice Toklu', icon: '👩' },
     { id: 'hatice_livreta', name: 'Livret A Hatice Toklu', icon: '📕' },
+    { id: 'hatice_banquepop', name: 'Banque populaire Hatice', icon: '🏦' },
     { id: 'geoffrey', name: 'Compte Geoffrey', icon: '👨' },
     { id: 'lep', name: 'Livret D\'épargne (LEP) Geoffrey', icon: '🏦' },
     { id: 'crypto', name: 'Trade Republic - Crypto', icon: '🪙' },
@@ -398,8 +399,8 @@ export default function DashboardPage() {
 
   // Calcul des soldes par personne
   const getHaticeBalance = () => {
-    // Hatice: hatice + hatice_livreta (SANS joint)
-    const haticeAccounts = ['hatice', 'hatice_livreta']
+    // Hatice: hatice + hatice_livreta + hatice_banquepop (SANS joint)
+    const haticeAccounts = ['hatice', 'hatice_livreta', 'hatice_banquepop']
     const accTransactions = transactions.filter(t => haticeAccounts.includes(t.account))
     const income = accTransactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0)
     const expenses = accTransactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0)
@@ -441,7 +442,7 @@ export default function DashboardPage() {
   // ===== HOME TAB =====
   if (activeTab === 'home') {
     content = (
-      <div style={{ minHeight: '100vh', backgroundColor: '#f5f3ff', paddingBottom: '100px' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f5f3ff', paddingBottom: '150px' }}>
         {/* Header Premium */}
         <div style={{
           background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
@@ -1322,7 +1323,7 @@ export default function DashboardPage() {
     }
 
     content = (
-      <div style={{ minHeight: '100vh', backgroundColor: '#f5f3ff', paddingBottom: '100px', padding: '20px' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f5f3ff', paddingBottom: '150px', padding: '20px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Mes Comptes</h2>
 
         {/* Tous les comptes */}
@@ -1341,7 +1342,7 @@ export default function DashboardPage() {
     )
   } else if (activeTab === 'analytics') {
     content = (
-      <div style={{ minHeight: '100vh', backgroundColor: '#f5f3ff', paddingBottom: '100px', padding: '20px' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f5f3ff', paddingBottom: '150px', padding: '20px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Statistiques</h2>
 
         {monthTransactions.length > 0 ? (
@@ -1383,7 +1384,7 @@ export default function DashboardPage() {
     )
   } else if (activeTab === 'settings') {
     content = (
-      <div style={{ minHeight: '100vh', backgroundColor: '#f5f3ff', paddingBottom: '100px', padding: '20px' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#f5f3ff', paddingBottom: '150px', padding: '20px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Paramètres</h2>
 
         <div style={{ background: '#fff', padding: '24px', borderRadius: '14px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)' }}>
