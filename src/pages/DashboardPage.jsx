@@ -1051,11 +1051,12 @@ export default function DashboardPage() {
                     data={chartData}
                     cx="45%"
                     cy="50%"
-                    labelLine={true}
-                    label={({ name, value }) => `${name}: €${value}`}
+                    labelLine={false}
+                    label={({ value }) => `€${value}`}
                     outerRadius={70}
                     fill="#8884d8"
                     dataKey="value"
+                    style={{ fontSize: '12px', fontWeight: '600' }}
                   >
                     {chartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
