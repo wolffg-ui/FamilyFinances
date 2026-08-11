@@ -33,6 +33,8 @@ export default function DashboardPage() {
   const [customCategory, setCustomCategory] = useState('')
   const [type, setType] = useState('debit')
   const [transferAmount, setTransferAmount] = useState('')
+  const [description, setDescription] = useState('')
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
 
   // Édition
   const [editingId, setEditingId] = useState(null)
@@ -40,6 +42,8 @@ export default function DashboardPage() {
   const [editCategory, setEditCategory] = useState('')
   const [editCustomCategory, setEditCustomCategory] = useState('')
   const [editType, setEditType] = useState('')
+  const [editDescription, setEditDescription] = useState('')
+  const [editDate, setEditDate] = useState('')
 
   const categories = ['Courses', 'Loyer', 'Transport', 'Loisirs', 'Restaurant', 'Santé', 'Salaire', 'CAF', 'Autre']
 
@@ -94,12 +98,17 @@ export default function DashboardPage() {
       return
     }
 
+    // Convertir la date de YYYY-MM-DD à DD/MM/YYYY
+    const [year, month, day] = date.split('-')
+    const formattedDate = `${day}/${month}/${year}`
+
     const newTransaction = {
       id: Date.now(),
       amount: parsedAmount,
       category: finalCategory,
+      description: description.trim() || '',
       type,
-      date: new Date().toLocaleDateString('fr-FR'),
+      date: formattedDate,
       timestamp: Date.now(),
       account: activeAccount
     }
@@ -109,6 +118,8 @@ export default function DashboardPage() {
     setAmount('')
     setCategory('Courses')
     setCustomCategory('')
+    setDescription('')
+    setDate(new Date().toISOString().split('T')[0])
     setType('debit')
     setShowForm(false)
 
@@ -121,6 +132,11 @@ export default function DashboardPage() {
     setEditAmount(tx.amount.toString())
     setEditCategory(tx.category === 'Virement' ? 'Courses' : tx.category)
     setEditType(tx.type)
+    setEditDescription(tx.description || '')
+
+    // Convertir la date de DD/MM/YYYY à YYYY-MM-DD
+    const [day, month, year] = tx.date.split('/')
+    setEditDate(`${year}-${month}-${day}`)
 
     // Si la catégorie est personnalisée, la mettre dans customCategory
     const isCustom = !categories.includes(tx.category) && tx.category !== 'Virement'
@@ -153,9 +169,13 @@ export default function DashboardPage() {
       return
     }
 
+    // Convertir la date de YYYY-MM-DD à DD/MM/YYYY
+    const [year, month, day] = editDate.split('-')
+    const formattedDate = `${day}/${month}/${year}`
+
     setTransactions(transactions.map(t =>
       t.id === editingId
-        ? { ...t, amount: parsedAmount, category: finalCategory, type: editType }
+        ? { ...t, amount: parsedAmount, category: finalCategory, type: editType, description: editDescription.trim() || '', date: formattedDate }
         : t
     ))
 
@@ -164,6 +184,8 @@ export default function DashboardPage() {
     setEditCategory('')
     setEditCustomCategory('')
     setEditType('')
+    setEditDescription('')
+    setEditDate('')
     alert('✅ Transaction modifiée!')
   }
 
@@ -460,6 +482,57 @@ export default function DashboardPage() {
                 </div>
               )}
 
+              {/* Description */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Nom de la dépense
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Restaurant Pizza, Boulangerie..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
+              {/* Date */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Date
+                </label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
               {/* Bouton soumettre */}
               <button
                 type="submit"
@@ -595,6 +668,57 @@ export default function DashboardPage() {
                 </div>
               )}
 
+              {/* Description */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Nom de la dépense
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Restaurant Pizza, Boulangerie..."
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
+              {/* Date */}
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '8px', color: '#6b7280' }}>
+                  Date
+                </label>
+                <input
+                  type="date"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: '2px solid #e5e7eb',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                    minHeight: '48px',
+                    fontWeight: '600',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
               {/* Boutons */}
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button
@@ -718,16 +842,16 @@ export default function DashboardPage() {
         {monthTransactions.length > 0 && (
           <div style={{ padding: '16px' }}>
             <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: '700', color: '#1f2937' }}>Répartition par Catégorie</h3>
-            <div style={{ background: '#fff', padding: '20px', borderRadius: '14px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)' }}>
-              <ResponsiveContainer width="100%" height={300}>
+            <div style={{ background: '#fff', padding: '20px', borderRadius: '14px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)', overflowX: 'auto' }}>
+              <ResponsiveContainer width="100%" height={350}>
                 <PieChart>
                   <Pie
                     data={chartData}
-                    cx="50%"
+                    cx="45%"
                     cy="50%"
-                    labelLine={false}
+                    labelLine={true}
                     label={({ name, value }) => `${name}: €${value}`}
-                    outerRadius={80}
+                    outerRadius={70}
                     fill="#8884d8"
                     dataKey="value"
                   >
@@ -738,6 +862,17 @@ export default function DashboardPage() {
                   <Tooltip formatter={(value) => `€${value.toFixed(2)}`} />
                 </PieChart>
               </ResponsiveContainer>
+              <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e5e7eb' }}>
+                <p style={{ margin: '0 0 12px', fontSize: '12px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase' }}>Légende:</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {chartData.map((entry, index) => (
+                    <div key={`legend-${index}`} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#1f2937' }}>
+                      <div style={{ width: '12px', height: '12px', backgroundColor: COLORS[index % COLORS.length], borderRadius: '2px' }}></div>
+                      <span><strong>{entry.name}:</strong> €{entry.value.toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -775,8 +910,12 @@ export default function DashboardPage() {
                   }}
                 >
                   <div style={{ flex: 1 }}>
-                    <p style={{ margin: 0, fontSize: '15px', fontWeight: '700', color: '#1f2937' }}>{tx.category}</p>
-                    <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#9ca3af' }}>{tx.date}</p>
+                    <p style={{ margin: 0, fontSize: '15px', fontWeight: '700', color: '#1f2937' }}>
+                      {tx.description ? tx.description : tx.category}
+                    </p>
+                    <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#9ca3af' }}>
+                      {tx.category}{tx.description && ` • ${tx.date}`}{!tx.description && tx.date}
+                    </p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <p style={{
