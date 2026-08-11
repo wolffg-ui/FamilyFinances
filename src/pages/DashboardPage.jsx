@@ -11,6 +11,7 @@ export default function DashboardPage() {
   const accounts = [
     { id: 'joint', name: 'Compte Joint', icon: '💑' },
     { id: 'hatice', name: 'Compte Hatice Toklu', icon: '👩' },
+    { id: 'hatice_livreta', name: 'Livret A Hatice Toklu', icon: '📕' },
     { id: 'geoffrey', name: 'Compte Geoffrey', icon: '👨' },
     { id: 'lep', name: 'Livret D\'épargne (LEP) Geoffrey', icon: '🏦' },
     { id: 'crypto', name: 'Trade Republic - Crypto', icon: '🪙' },
@@ -327,7 +328,9 @@ export default function DashboardPage() {
 
   // Calcul des soldes par personne
   const getHaticeBalance = () => {
-    const accTransactions = transactions.filter(t => t.account === 'hatice')
+    // Hatice: hatice + hatice_livreta (SANS joint)
+    const haticeAccounts = ['hatice', 'hatice_livreta']
+    const accTransactions = transactions.filter(t => haticeAccounts.includes(t.account))
     const income = accTransactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0)
     const expenses = accTransactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0)
     return income - expenses
