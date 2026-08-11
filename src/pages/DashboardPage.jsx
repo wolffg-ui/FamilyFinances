@@ -312,6 +312,19 @@ export default function DashboardPage() {
 
   const balance = totalIncome - totalExpenses
 
+  // Solde total de tous les comptes
+  const getTotalBalance = () => {
+    const accountBalances = accounts.map(acc => {
+      const accTransactions = transactions.filter(t => t.account === acc.id)
+      const income = accTransactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0)
+      const expenses = accTransactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0)
+      return income - expenses
+    })
+    return accountBalances.reduce((sum, b) => sum + b, 0)
+  }
+
+  const totalBalance = getTotalBalance()
+
   // Données pour les graphiques
   const categoryData = {}
   monthTransactions.forEach(t => {
@@ -344,6 +357,14 @@ export default function DashboardPage() {
           boxShadow: '0 10px 40px rgba(99, 102, 241, 0.2)'
         }}>
           <Logo />
+
+          {/* Solde Total */}
+          <div style={{ marginTop: '20px', marginBottom: '16px', padding: '16px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+            <p style={{ margin: 0, opacity: 0.9, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>💰 Solde Total (Tous Comptes)</p>
+            <p style={{ margin: '8px 0 0', fontSize: '32px', fontWeight: '900' }}>
+              €{totalBalance.toFixed(2)}
+            </p>
+          </div>
 
           {/* Sélecteur de Compte */}
           <div style={{ marginTop: '20px', marginBottom: '20px' }}>
