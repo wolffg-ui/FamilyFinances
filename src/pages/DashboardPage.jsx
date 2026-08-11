@@ -50,6 +50,16 @@ export default function DashboardPage() {
   const [editDescription, setEditDescription] = useState('')
   const [editDate, setEditDate] = useState('')
 
+  // Dépenses récurrentes
+  const [recurringTransactions, setRecurringTransactions] = useState(() => {
+    try {
+      const saved = localStorage.getItem('familyFinances_recurring')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+
   const categories = [
     // Revenus
     'Salaire',
@@ -112,6 +122,11 @@ export default function DashboardPage() {
     localStorage.setItem('familyFinances_transactions', JSON.stringify(transactions))
     console.log('✅ Transactions sauvegardées dans localStorage')
   }, [transactions])
+
+  // Sauvegarder les transactions récurrentes dans localStorage
+  useEffect(() => {
+    localStorage.setItem('familyFinances_recurring', JSON.stringify(recurringTransactions))
+  }, [recurringTransactions])
 
   // Sauvegarder le compte actif dans localStorage
   useEffect(() => {
@@ -238,6 +253,16 @@ export default function DashboardPage() {
   const handleDeleteTransaction = (id) => {
     if (confirm('Supprimer cette transaction?')) {
       setTransactions(transactions.filter(t => t.id !== id))
+      setRecurringTransactions(recurringTransactions.filter(rid => rid !== id))
+    }
+  }
+
+  // Toggle dépense récurrente
+  const handleToggleRecurring = (id) => {
+    if (recurringTransactions.includes(id)) {
+      setRecurringTransactions(recurringTransactions.filter(rid => rid !== id))
+    } else {
+      setRecurringTransactions([...recurringTransactions, id])
     }
   }
 
@@ -352,6 +377,11 @@ export default function DashboardPage() {
     .reduce((sum, t) => sum + t.amount, 0)
 
   const balance = totalIncome - totalExpenses
+
+  // Total des dépenses récurrentes mensuelles
+  const recurringExpenses = monthTransactions
+    .filter(t => t.type === 'debit' && recurringTransactions.includes(t.id))
+    .reduce((sum, t) => sum + t.amount, 0)
 
   // Solde total de tous les comptes
   const getTotalBalance = () => {
@@ -1154,6 +1184,27 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Widget Dépenses Récurrentes */}
+        {recurringExpenses > 0 && (
+          <div style={{ padding: '16px' }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)',
+              padding: '20px',
+              borderRadius: '14px',
+              borderLeft: '4px solid #ef4444',
+              boxShadow: '0 2px 8px rgba(239, 68, 68, 0.1)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                <div>
+                  <p style={{ margin: 0, fontSize: '13px', fontWeight: '600', color: '#991b1b', textTransform: 'uppercase' }}>♻️ Dépenses récurrentes</p>
+                  <p style={{ margin: '8px 0 0', fontSize: '28px', fontWeight: '800', color: '#dc2626' }}>€{recurringExpenses.toFixed(2)}</p>
+                  <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#991b1b', opacity: 0.8 }}>Total mensuel des dépenses marquées comme récurrentes</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Transactions */}
         <div style={{ padding: '16px' }}>
           <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: '700', color: '#1f2937' }}>Transactions - {monthName}</h3>
@@ -1172,18 +1223,21 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {monthTransactions.map(tx => (
+              {monthTransactions.map(tx => {
+                const isRecurring = recurringTransactions.includes(tx.id)
+                return (
                 <div
                   key={tx.id}
                   style={{
-                    background: '#fff',
+                    background: isRecurring ? '#fee2e2' : '#fff',
                     padding: '16px',
                     borderRadius: '12px',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-                    transition: 'all 0.3s'
+                    boxShadow: isRecurring ? '0 2px 12px rgba(239, 68, 68, 0.1)' : '0 2px 8px rgba(0, 0, 0, 0.05)',
+                    transition: 'all 0.3s',
+                    borderLeft: isRecurring ? '4px solid #ef4444' : 'none'
                   }}
                 >
                   <div style={{ flex: 1 }}>
@@ -1219,6 +1273,22 @@ export default function DashboardPage() {
                       ✏️
                     </button>
                     <button
+                      onClick={() => handleToggleRecurring(tx.id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: isRecurring ? '#ef4444' : '#9ca3af',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        padding: '4px 8px',
+                        transition: 'all 0.2s',
+                        opacity: isRecurring ? 1 : 0.5
+                      }}
+                      title={isRecurring ? "Retirer des récurrentes" : "Marquer comme récurrente"}
+                    >
+                      ♻️
+                    </button>
+                    <button
                       onClick={() => handleDeleteTransaction(tx.id)}
                       style={{
                         background: 'none',
@@ -1235,7 +1305,8 @@ export default function DashboardPage() {
                     </button>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
